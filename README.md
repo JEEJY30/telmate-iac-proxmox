@@ -24,22 +24,30 @@ proxmox_api_token = "yourAPItoken"
 ssh_public_key = "your-ssh-public-key"
 
 ```
-## Second thing, must have is ubuntu cloudinit image
+## Second must have is ubuntu cloudinit image on proxmox node
 🐧 Installing Ubuntu 24.04 Noble Numbat Cloud-Init Image on Proxmox
 Terraform will use a Cloud-Init ready image as the base for provisioning VMs.
 Follow these steps on your Proxmox node:
-Download the Ubuntu Noble Cloud-Init Image:
+## Download the Ubuntu Noble Cloud-Init Image:
 ```
 wget https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
-Create a new VM with ID 1000 (adjust storage and bridge as needed):
+```
+## Create a new VM with ID 1000 (adjust storage and bridge as needed):
+```
 qm create 1000 --name "ubuntu-2404-cloudinit" --memory 2048 --cores 2 --net0 virtio,bridge=vmbr0
-Import the image into Proxmox storage (replace local-lvm with your storage name):
+```
+## Import the image into Proxmox storage (replace local-lvm with your storage name):
+```
 qm importdisk 1000 noble-server-cloudimg-amd64.img local-lvm
 qm set 1000 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-1000-disk-0
-Enable Cloud-Init:
+```
+## Enable Cloud-Init:
+```
 qm set 1000 --ide2 local-lvm:cloudinit
 qm set 1000 --boot c --bootdisk scsi0
 qm set 1000 --serial0 socket --vga serial0
-Convert it into a template:
+```
+## Convert it into a template:
+```
 qm template 1000
 ```
