@@ -5,7 +5,7 @@ resource "proxmox_vm_qemu" "cloud-init" {
     name = each.value.name
     target_node = "pve"
 
-    clone = "ubuntu-cloudrnit"
+    clone = "ubuntu-cloudinit"
     full_clone = false
     bios = "ovmf"
     agent = 1
