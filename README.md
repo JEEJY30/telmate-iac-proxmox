@@ -34,7 +34,7 @@ wget https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.i
 ```
 ## Create a new VM with ID 1000 (adjust storage and bridge as needed):
 ```
-qm create 1000 --name "ubuntu-2404-cloudinit" --memory 2048 --cores 2 --net0 virtio,bridge=vmbr0
+qm create 1000 --name "ubuntu-cloudinit" --memory 2048 --cores 2 --net0 virtio,bridge=vmbr0
 ```
 ## Import the image into Proxmox storage (replace local-lvm with your storage name):
 ```
