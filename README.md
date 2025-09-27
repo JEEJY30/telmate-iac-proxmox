@@ -23,7 +23,8 @@ proxmox_api_token = "yourAPItoken"
 # Your SSH public key (used for VM access)
 ssh_public_key = "your-ssh-public-key"
 
-
+```
+Second thing, must have is ubuntu cloudinit image
 🐧 Installing Ubuntu 24.04 Noble Numbat Cloud-Init Image on Proxmox
 Terraform will use a Cloud-Init ready image as the base for provisioning VMs.
 Follow these steps on your Proxmox node:
