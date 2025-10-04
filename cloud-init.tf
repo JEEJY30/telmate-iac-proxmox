@@ -17,7 +17,7 @@ resource "proxmox_vm_qemu" "cloud-init" {
     vm_state = each.value.vm_state
     onboot = each.value.onboot  
     startup = each.value.startup
-    nameserver = "1.1.1.1 8.8.8.8"
+    nameserver = "1.1.1.1 8.8.8.8 192.168.0.135"
     tags = each.value.tags
     ipconfig0 = each.value.ipconfig
     skip_ipv6 = true
