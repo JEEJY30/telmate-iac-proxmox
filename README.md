@@ -50,4 +50,3 @@ qm set 1000 --serial0 socket --vga serial0
 ## Convert it into a template:
 ```
 qm template 1000
-```
