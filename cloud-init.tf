@@ -1,65 +1,71 @@
 resource "proxmox_vm_qemu" "cloud-init" {
-    for_each = var.vm_configs
-    
-    vmid = each.value.vm_id
-    name = each.value.name
-    target_node = "pve"
+  for_each = var.vm_configs
 
-    clone = "ubuntu-cloudinit"
-    full_clone = false
-    bios = "ovmf"
-    agent = 1
-    scsihw = "virtio-scsi-single"
+  vmid         = each.value.vm_id
+  name         = each.value.name
+  target_node  = "pve"
 
-    os_type = "cloud-init"  
-    memory = each.value.memory
+  clone        = "ubuntu-cloudinit"
+  full_clone   = false
+  bios         = "ovmf"
+  agent        = 1
+  scsihw       = "virtio-scsi-single"
+  os_type      = "cloud-init"
+  memory       = each.value.memory
 
-    vm_state = each.value.vm_state
-    onboot = each.value.onboot  
-    startup = each.value.startup
-    nameserver = "192.168.0.135"
-    tags = each.value.tags
-    ipconfig0 = each.value.ipconfig
-    skip_ipv6 = true
-    ciuser = each.value.ciuser
-    cipassword = each.value.cipassword
-    sshkeys = var.ssh_public_key
+  vm_state     = each.value.vm_state
+  onboot       = each.value.onboot
+  startup      = each.value.startup
+  nameserver   = "192.168.0.135"
+  tags         = each.value.tags
+  ipconfig0    = each.value.ipconfig
+  skip_ipv6    = true
+  ciuser       = each.value.ciuser
+  cipassword   = each.value.cipassword
+  sshkeys      = var.ssh_public_key
 
-    cpu {
-        type = "x86-64-v2-AES"
-        sockets = 1
-        cores = each.value.cores
+  cpu {
+    type    = "host"
+    sockets = 1
+    cores   = each.value.cores
+  }
+
+  serial {
+    id   = 0
+    type = "socket"
+  }
+
+  network {
+    id       = 0
+    model    = "virtio"
+    bridge   = each.value.bridge
+    firewall = true
+    tag      = each.value.network_tag
+  }
+
+  # 🧩 Dynamically attach all disks
+  dynamic "disk" {
+    for_each = each.value.disks
+    content {
+      slot       = "scsi${disk.key}"
+      type       = "disk"
+      size       = disk.value.size
+      storage    = disk.value.storage
+      replicate  = lookup(disk.value, "replicate", true)
     }
+  }
 
-    serial {
-        id = 0
-        type = "socket"
-    }
+  # 🧩 Cloud-init drive (always ide2)
+  disk {
+    slot    = "scsi1"
+    type    = "cloudinit"
+    storage = "local-lvm"
+  }
 
-    network {
-        id = 0
-        model = "virtio"
-        bridge = each.value.bridge
-        firewall = true
-        tag = each.value.network_tag
-    }
-
-    disks {
-      scsi {
-          scsi0 {
-              disk {
-                  size = each.value.size
-                  storage = "ZFS"
-                  replicate = "true"
-              }
-          }
-      }
-      ide {
-          ide0 {
-              cloudinit {
-                  storage = "local-lvm"
-              }
-        }
-      }
-    }
+  lifecycle {
+    # Prevent constant "update in place" loops caused by Proxmox
+    ignore_changes = [
+      disk,
+    ]
+  }
 }
