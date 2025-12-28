@@ -47,7 +47,7 @@ resource "proxmox_vm_qemu" "cloud-init" {
   dynamic "disk" {
     for_each = each.value.disks
     content {
-      slot       = "scsi${disk.key}"
+      slot       = "scsi${disk.key + 2}"
       type       = "disk"
       size       = disk.value.size
       storage    = disk.value.storage

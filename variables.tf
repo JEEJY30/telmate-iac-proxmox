@@ -96,7 +96,7 @@ variable vm_configs {
       }
       "Argo-CD" = {
         vm_id       = 1004
-        name        = "rancher"
+        name        = "argo-cd"
         memory      = 4112
         vm_state    = "running"
         onboot      = true
@@ -107,7 +107,7 @@ variable vm_configs {
         cores       = 3
         bridge      = "vmbr0"
         network_tag = 0
-        tags        = "Argo-CD"
+        tags        = "argo-cd"
         disks       = [
           { size = "54G", storage = "ZFS" },
         ]
